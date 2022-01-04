@@ -13,6 +13,10 @@ processors:
   batch:
 
 exporters:
+  datadog:
+    api:
+      key: ""
+      site: datadoghq.eu
   logging:
     loglevel: debug
   awsxray:
@@ -24,10 +28,10 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [awsxray]
+      exporters: [datadog]
     metrics:
       receivers: [otlp]
-      exporters: [awsemf]
+      exporters: [datadog]
 
   extensions: [pprof]
   telemetry:
