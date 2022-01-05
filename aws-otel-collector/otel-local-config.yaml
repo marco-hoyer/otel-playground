@@ -25,15 +25,25 @@ exporters:
     region: 'eu-central-1'
   awsemf:
     region: 'eu-central-1'
+  otlp:
+    endpoint: https://otlp.nr-data.net:4317
+    headers:
+      "api-key": ""
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      exporters: [datadog]
+#      processors: [batch]
+      exporters: [datadog, otlp]
     metrics:
       receivers: [otlp]
-      exporters: [datadog]
+#      processors: [batch]
+      exporters: [datadog, otlp]
+#    logs:
+#      receivers: [otlp]
+#      processors: [batch]
+#      exporters: [otlp]
 
   extensions: [pprof]
   telemetry:
