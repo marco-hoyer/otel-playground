@@ -6,14 +6,58 @@ services:
     ports:
       - "4317:4317"
       - "4318:4318"
+    command: ["--config=/etc/otel-agent-config.yaml"]
     environment:
       AWS_ACCESS_KEY_ID: a
       AWS_SECRET_ACCESS_KEY: b
       AWS_SESSION_TOKEN: c
       AWS_REGION: eu-central-1
-  python-webapp:
-    build: python-webapp
+
+#  tempo:
+#    image: grafana/tempo
+#    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]
+#    volumes:
+#      - ./grafana-tempo/tempo.yaml:/etc/tempo.yaml
+#      - ./grafana-tempo/data/:/tmp/tempo
+#    ports:
+#      - "3200:3200"   # tempo
+#
+#  grafana:
+#    image: grafana/grafana:8.3.3
+#    volumes:
+#      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+#      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+#    environment:
+#      - GF_AUTH_ANONYMOUS_ENABLED=true
+#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+#      - GF_AUTH_DISABLE_LOGIN_FORM=true
+#    ports:
+#      - "3000:3000"
+
+  api-proxy:
+    build: api-proxy
+    ports:
+      - "6666:6666"
+    depends_on:
+      - otel-collector
+      - fronting-service
+
+  fronting-service:
+    build: fronting-service
     ports:
       - "7777:7777"
+    depends_on:
+      - otel-collector
+      - backend-service
+
+  backend-service:
+    build: backend-service
+    ports:
+      - "8888:4567"
+    environment:
+      OTEL_LOG_LEVEL: debug
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OTEL_RESOURCE_ATTRIBUTES: "service.stage=testing"
     depends_on:
       - otel-collector

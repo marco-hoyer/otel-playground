@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'opentelemetry-api'
+gem 'opentelemetry-exporter-otlp'
+gem 'opentelemetry-instrumentation-sinatra'
+gem 'opentelemetry-sdk'
+gem 'rake'
+gem 'sinatra'
+gem 'thin'
+gem 'byebug'
