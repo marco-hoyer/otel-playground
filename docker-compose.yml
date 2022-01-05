@@ -13,6 +13,9 @@ services:
       AWS_SESSION_TOKEN: c
       AWS_REGION: eu-central-1
 
+  catcher:
+    image: nginx
+
 #  tempo:
 #    image: grafana/tempo
 #    command: [ "-search.enabled=true", "-config.file=/etc/tempo.yaml" ]

@@ -17,7 +17,7 @@ processors:
 exporters:
   datadog:
     api:
-      key: ""
+      key: "aa14c6910f22009f4c587505b0eb3387"
       site: datadoghq.eu
   logging:
     loglevel: debug
@@ -26,24 +26,37 @@ exporters:
   awsemf:
     region: 'eu-central-1'
   otlp:
-    endpoint: https://otlp.nr-data.net:4317
+    endpoint: https://otlp.eu01.nr-data.net:4317
     headers:
-      "api-key": ""
+      "api-key": "token"
+  otlp/2:
+    endpoint: api.honeycomb.io:443
+    headers:
+      x-honeycomb-team: "token"
+      x-honeycomb-dataset: "testapp"
+  otlp/3:
+    endpoint: ingest.lightstep.com:443
+    headers:
+      lightstep-access-token: "token"
+  otlp/4:
+    endpoint: tempo-eu-west-0.grafana.net:443
+    headers:
+      authorization: "Basic token"
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-#      processors: [batch]
-      exporters: [datadog, otlp]
+      processors: [batch]
+      exporters: [datadog, otlp, otlp/2, otlp/3, otlp/4]
     metrics:
       receivers: [otlp]
-#      processors: [batch]
-      exporters: [datadog, otlp]
-#    logs:
-#      receivers: [otlp]
-#      processors: [batch]
-#      exporters: [otlp]
+      processors: [batch]
+      exporters: [datadog, otlp, otlp/2, otlp/3, otlp/4]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
 
   extensions: [pprof]
   telemetry:
